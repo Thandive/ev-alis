@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>On Mending Broken Wings — E.V. Alis</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;500&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --parchment:     #f5ede0;
+      --parchment-mid: #ede0cc;
+      --parchment-deep:#d9c8a9;
+      --ink:           #2a1f14;
+      --ink-soft:      #4a3728;
+      --ink-faint:     #7a6454;
+      --gold:          #b8892a;
+      --gold-light:    #d4a84b;
+      --gold-pale:     #e8c97a;
+      --crack-1:       #c09a45;
+      --crack-2:       #a07820;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--parchment);
+      color: var(--ink);
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-weight: 300;
+      font-size: 18px;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Parchment texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.5;
+    }
+
+    /* Kintsugi crack SVG — decorative, floats over sections */
+    .crack-svg {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* ─── LAYOUT ─── */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 0 2rem;
+      position: relative;
+      z-index: 2;
+    }
+
+    section {
+      position: relative;
+    }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Background warm vignette */
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 60%, transparent 40%, rgba(180,140,80,0.12) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      animation: fadeUp 1.4s ease both;
+    }
+
+    .book-cover-wrap {
+      position: relative;
+      display: inline-block;
+      margin-bottom: 3rem;
+    }
+
+    .book-cover-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      background: linear-gradient(135deg, var(--gold-light), var(--gold), var(--gold-pale), var(--gold));
+      z-index: -1;
+      border-radius: 2px;
+      opacity: 0.6;
+    }
+
+    .book-cover {
+      display: block;
+      width: 220px;
+      height: 330px;
+      object-fit: cover;
+      border-radius: 1px;
+      box-shadow:
+        6px 10px 30px rgba(42,31,20,0.25),
+        2px 4px 8px rgba(42,31,20,0.15);
+      transition: transform 0.6s ease, box-shadow 0.6s ease;
+    }
+
+    .book-cover:hover {
+      transform: translateY(-6px) rotate(0.5deg);
+      box-shadow:
+        10px 18px 40px rgba(42,31,20,0.3),
+        3px 6px 12px rgba(42,31,20,0.2);
+    }
+
+    /* Placeholder cover if no image */
+    .book-cover-placeholder {
+      width: 220px;
+      height: 330px;
+      background: linear-gradient(160deg, var(--parchment-mid) 0%, var(--parchment-deep) 100%);
+      border-radius: 1px;
+      box-shadow:
+        6px 10px 30px rgba(42,31,20,0.25),
+        2px 4px 8px rgba(42,31,20,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      padding: 2rem;
+      text-align: center;
+      line-height: 2;
+    }
+
+    .eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+      animation: fadeUp 1.4s 0.2s ease both;
+    }
+
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      line-height: 1.15;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+      animation: fadeUp 1.4s 0.35s ease both;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--ink-soft);
+    }
+
+    .subtitle {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--gold);
+      letter-spacing: 0.08em;
+      margin-bottom: 2.5rem;
+      animation: fadeUp 1.4s 0.5s ease both;
+    }
+
+    .gold-rule {
+      width: 60px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold-light), transparent);
+      margin: 0 auto 2.5rem;
+      animation: fadeUp 1.4s 0.6s ease both;
+    }
+
+    /* ─── SECTIONS COMMON ─── */
+    .section-inner {
+      padding: 5rem 0;
+      border-top: 1px solid var(--parchment-deep);
+      position: relative;
+    }
+
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 2rem;
+      display: block;
+    }
+
+    /* ─── BLURB ─── */
+    #blurb .section-inner {
+      position: relative;
+    }
+
+    .blurb-text {
+      font-size: 1.15rem;
+      line-height: 1.9;
+      color: var(--ink-soft);
+      font-weight: 300;
+    }
+
+    .blurb-text p + p {
+      margin-top: 1.4rem;
+    }
+
+    .blurb-text p:first-child::first-letter {
+      font-family: 'Cinzel', serif;
+      font-size: 3.5rem;
+      line-height: 0.8;
+      float: left;
+      margin-right: 0.12em;
+      margin-top: 0.1em;
+      color: var(--gold);
+    }
+
+    /* Kintsugi crack decoration — blurb */
+    .crack-blurb {
+      top: 0; right: -40px;
+      width: 120px; height: 200px;
+      opacity: 0.35;
+    }
+
+    /* ─── ABOUT ─── */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 2rem;
+      align-items: start;
+    }
+
+    .author-initial {
+      width: 80px;
+      height: 80px;
+      border: 1px solid var(--parchment-deep);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      color: var(--gold);
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    /* gold corner accents */
+    .author-initial::before,
+    .author-initial::after {
+      content: '';
+      position: absolute;
+      width: 10px; height: 10px;
+      border-color: var(--gold-light);
+      border-style: solid;
+    }
+    .author-initial::before { top: -1px; left: -1px; border-width: 1px 0 0 1px; }
+    .author-initial::after  { bottom: -1px; right: -1px; border-width: 0 1px 1px 0; }
+
+    .about-text {
+      font-size: 1rem;
+      color: var(--ink-soft);
+      line-height: 1.85;
+    }
+
+    /* ─── BUY ─── */
+    #buy .section-inner {
+      text-align: center;
+    }
+
+    .buy-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-weight: 300;
+      font-size: 1.6rem;
+      color: var(--ink);
+      margin-bottom: 0.5rem;
+    }
+
+    .buy-sub {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 0.95rem;
+      color: var(--ink-faint);
+      margin-bottom: 2rem;
+    }
+
+    .btn-buy {
+      display: inline-block;
+      padding: 0.85rem 2.8rem;
+      border: 1px solid var(--gold);
+      color: var(--ink);
+      text-decoration: none;
+      font-family: 'Cinzel', serif;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      position: relative;
+      transition: all 0.35s ease;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .btn-buy::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: var(--gold);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.35s ease;
+      z-index: -1;
+    }
+
+    .btn-buy:hover {
+      color: var(--parchment);
+    }
+    .btn-buy:hover::before {
+      transform: scaleX(1);
+    }
+
+    /* ─── CONTACT / SIGNUP ─── */
+    #contact .section-inner {
+      text-align: center;
+    }
+
+    .contact-intro {
+      font-family: 'IM Fell English', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      color: var(--ink-soft);
+      margin-bottom: 2rem;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .signup-form {
+      display: flex;
+      gap: 0;
+      max-width: 400px;
+      margin: 0 auto 1.5rem;
+      border: 1px solid var(--parchment-deep);
+      overflow: hidden;
+    }
+
+    .signup-form input[type="email"] {
+      flex: 1;
+      padding: 0.85rem 1.2rem;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      min-width: 0;
+    }
+
+    .signup-form input::placeholder {
+      color: var(--ink-faint);
+      font-style: italic;
+    }
+
+    .signup-form button {
+      padding: 0.85rem 1.4rem;
+      background: var(--parchment-deep);
+      border: none;
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+      transition: background 0.3s, color 0.3s;
+      white-space: nowrap;
+    }
+
+    .signup-form button:hover {
+      background: var(--gold);
+      color: var(--parchment);
+    }
+
+    .contact-alt {
+      font-size: 0.85rem;
+      color: var(--ink-faint);
+      font-style: italic;
+    }
+
+    .contact-alt a {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .contact-alt a:hover {
+      border-bottom-color: var(--gold);
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      padding: 2.5rem 0 3rem;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .footer-gold-rule {
+      width: 40px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 1.5rem;
+    }
+
+    footer p {
+      font-family: 'Cinzel', serif;
+      font-size: 8.5px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+    }
+
+    /* ─── KINTSUGI CRACKS (inline SVG) ─── */
+    .kintsugi-hero {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    /* ─── ANIMATIONS ─── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(22px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 520px) {
+      .about-grid { grid-template-columns: 1fr; }
+      .author-initial { display: none; }
+      .signup-form { flex-direction: column; }
+      .signup-form button { border-top: 1px solid var(--parchment-deep); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ HERO ═══ -->
+  <section id="hero">
+
+    <!-- Kintsugi crack lines across hero background -->
+    <svg class="kintsugi-hero" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <defs>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="2.5" result="blur"/>
+          <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+        <linearGradient id="crackGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#c09a45" stop-opacity="0"/>
+          <stop offset="40%" stop-color="#d4a84b" stop-opacity="0.55"/>
+          <stop offset="100%" stop-color="#b8892a" stop-opacity="0"/>
+        </linearGradient>
+        <linearGradient id="crackGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#c09a45" stop-opacity="0"/>
+          <stop offset="50%" stop-color="#e8c97a" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#a07820" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <!-- Main crack across left -->
+      <path d="M 80 0 L 140 120 L 110 200 L 175 340 L 130 480 L 200 650 L 160 800"
+            stroke="url(#crackGrad1)" stroke-width="1.2" fill="none" filter="url(#glow)"/>
+      <!-- Branch crack -->
+      <path d="M 140 120 L 220 170 L 300 155 L 380 200"
+            stroke="url(#crackGrad1)" stroke-width="0.7" fill="none" opacity="0.6"/>
+      <!-- Right side crack -->
+      <path d="M 1200 150 L 1050 280 L 1100 400 L 980 520 L 1020 700 L 1200 800"
+            stroke="url(#crackGrad2)" stroke-width="1" fill="none" filter="url(#glow)"/>
+      <!-- Right branch -->
+      <path d="M 1050 280 L 940 310 L 880 380 L 800 370"
+            stroke="url(#crackGrad2)" stroke-width="0.6" fill="none" opacity="0.5"/>
+      <!-- Bottom subtle crack -->
+      <path d="M 400 800 L 480 680 L 520 600 L 600 580 L 680 560 L 720 480"
+            stroke="url(#crackGrad1)" stroke-width="0.8" fill="none" opacity="0.35"/>
+    </svg>
+
+    <div class="hero-content">
+      <p class="eyebrow">E . V .  A l i s</p>
+
+      <!-- Replace src with your actual cover image path -->
+      <div class="book-cover-wrap">
+        <div class="book-cover-placeholder">On Mending<br/>Broken Wings</div>
+        <!-- Uncomment once you have the cover:
+        <img class="book-cover" src="cover.jpg" alt="On Mending Broken Wings — book cover" />
+        -->
+      </div>
+
+      <h1><em>On Mending</em><br/>Broken Wings</h1>
+      <p class="subtitle">poetry</p>
+      <div class="gold-rule"></div>
+      <a href="#buy" class="btn-buy">Order the Book</a>
+    </div>
+  </section>
+
+  <!-- ═══ BLURB ═══ -->
+  <section id="blurb">
+    <div class="container">
+      <div class="section-inner reveal">
+
+        <!-- Crack decoration -->
+        <svg class="crack-svg crack-blurb" viewBox="0 0 120 200" aria-hidden="true">
+          <defs>
+            <linearGradient id="cg3" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#c09a45" stop-opacity="0"/>
+              <stop offset="50%" stop-color="#d4a84b" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="#c09a45" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M 60 0 L 45 50 L 70 90 L 40 140 L 65 200"
+                stroke="url(#cg3)" stroke-width="1.2" fill="none"/>
+          <path d="M 45 50 L 90 70 L 110 60"
+                stroke="url(#cg3)" stroke-width="0.7" fill="none" opacity="0.6"/>
+        </svg>
+
+        <span class="section-label">The Book</span>
+        <div class="blurb-text">
+          <!-- Replace with your actual blurb -->
+          <p>Some things break cleanly. Others splinter into a thousand directions — each fragment holding its own weight, its own memory, its own refusal to disappear.</p>
+          <p><em>On Mending Broken Wings</em> is a collection of poems that live in the space between loss and continuation. Between the women who shaped a diaspora and the silence they carried across waters. Between what was taken and what quietly remained.</p>
+          <p>These are not poems of resolution. They are poems of gold in the cracks.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ ABOUT ═══ -->
+  <section id="about">
+    <div class="container">
+      <div class="section-inner reveal">
+        <span class="section-label">The Poet</span>
+        <div class="about-grid">
+          <div class="author-initial">E</div>
+          <div class="about-text">
+            <!-- Replace with your actual bio -->
+            <p>E.V. Alis writes at the intersection of memory, diaspora, and the quietly radical act of witness. Drawing on the experiences of women from Guinea-Bissau and beyond, her work asks what it means to carry a history — and what it means to set it down.</p>
+            <p style="margin-top:1rem;"><em>On Mending Broken Wings</em> is her debut collection.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ BUY ═══ -->
+  <section id="buy">
+    <div class="container">
+      <div class="section-inner reveal">
+        <span class="section-label">Order</span>
+        <p class="buy-title">Acquire the Collection</p>
+        <p class="buy-sub">Available in print and digital editions</p>
+        <!-- Replace href with your Amazon KDP / other buy link -->
+        <a href="#" class="btn-buy">Order on Amazon</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CONTACT / SIGNUP ═══ -->
+  <section id="contact">
+    <div class="container">
+      <div class="section-inner reveal">
+        <span class="section-label">Stay in Touch</span>
+        <p class="contact-intro">For readings, events, and new work — leave your address here.</p>
+
+        <!-- Replace action with your actual form endpoint (Formspree, Netlify Forms, etc.) -->
+        <div class="signup-form">
+          <input type="email" placeholder="your email" name="email" autocomplete="email" />
+          <button type="button">Subscribe</button>
+        </div>
+
+        <p class="contact-alt">
+          Or write directly: <a href="mailto:hello@ev-alis.com">hello@ev-alis.com</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer>
+    <div class="container">
+      <div class="footer-gold-rule"></div>
+      <p>© 2026 E.V. Alis — All rights reserved</p>
+    </div>
+  </footer>
+
+  <script>
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+
+    // Simple email subscribe feedback
+    const btn = document.querySelector('.signup-form button');
+    const input = document.querySelector('.signup-form input');
+    if (btn && input) {
+      btn.addEventListener('click', () => {
+        if (input.value && input.value.includes('@')) {
+          btn.textContent = 'Thank you';
+          btn.style.background = 'var(--gold)';
+          btn.style.color = 'var(--parchment)';
+          input.value = '';
+          input.placeholder = 'you\'re on the list';
+        } else {
+          input.style.outline = '1px solid var(--gold)';
+          input.focus();
+          setTimeout(() => input.style.outline = '', 1200);
+        }
+      });
+    }
+  </script>
+
+</body>
+</html>
